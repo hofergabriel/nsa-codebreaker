@@ -8,6 +8,7 @@ def main():
     print(integer)
     bit=f.read(2)
     integer=bin(int.from_bytes(bit, byteorder='little', signed=False))[2:].zfill(16)
+    integer=bin(int.from_bytes(bit, byteorder='big', signed=False))[2:].zfill(16)
 
 main()
 

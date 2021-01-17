@@ -6,18 +6,27 @@ import sys
 import time
 from struct import *
 
-f = open("../../signal.ham","rb")
-w = open("stream.bin","wb")
+f=open("../../signal.ham","rb")
+w=open("stream.bin","wb")
 
-parity = np.array([ 
+code = np.array([ 
   [0,0], 
   [1,1], 
   [1,0], 
   ])
 
-res=np.concatenate((parity,np.identity(2)),axis=0)
+parity=np.concatenate((code,np.identity(2)),axis=0)
+generator = np.concatenate((np.identity(3),code),axis=1)
+R = np.array([
+  [1,0,0,0,0],
+  [0,1,0,0,0],
+  [0,0,1,0,0],
+  ])
 
-print("res: "+str(res))
+print("parity:\n"+str(parity))
+print("generator:\n"+str(generator))
+#exit()
+#---------------------------------------------------------------------
 
 def str2mat_vert(s):
   ret=np.zeros((5,1))
@@ -41,10 +50,11 @@ while b:
     b=f.read(2)
     cnt+=1
 
-  print(s,end=' ')
-  #check = np.transpose(np.array(list(map(lambda x: x%2, res0.dot(str2mat_vert(s)) ))))
-  check = np.array(list(map(lambda x: x%2, str2mat_horz(s).dot(res) )))
-  print("check2: "+str(check))
+  check = np.array(list(map(lambda x: x%2, str2mat_horz(s).dot(parity) )))
+  #print("check2: "+str(check))
+  print(s,end=' --> ')
+  Pr = R.dot(str2mat_vert(s))
+  print(np.transpose(Pr))
 
   time.sleep(0.05)
   sys.stdout.flush()
@@ -54,4 +64,5 @@ f.close()
 w.close()
 #print(s)
 exit()
+
 

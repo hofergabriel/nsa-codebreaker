@@ -1,6 +1,9 @@
 """
 Author: Gabriel Hofer
 Date: 01/21/2021
+
+Useful Commands to Remember: 
+$ od -t x1 stream.bin | head -n 10
 """
 
 import numpy as np
@@ -11,12 +14,14 @@ from struct import *
 f=open("../../signal.ham","rb")
 w=open("stream.bin","wb")
 
+""" binary string --> vector of boolean (ints) """
 def str2mat_vert(s):
   ret=np.zeros((5,1))
   for i in range(ret.shape[0]):
     ret[i,0]=int(s[i])
   return ret
 
+""" binary string --> vector of boolean (ints) """
 def str2mat_horz(s):
   ret=np.zeros((1,5))
   for i in range(ret.shape[1]):
@@ -29,7 +34,6 @@ def str2mat_horz(s):
 """
 def decode(p):
   b=f.read(2)                                                 # read two bytes from file 
-
   cnt=int(0)                                                  # initialize cnt and error to zero
   error=int(0)                                                # cnt is used for debugging to avoid reading whole file
   while b:
@@ -41,7 +45,7 @@ def decode(p):
       cnt+=1
     print(s)
     w.write(pack('B',int(s,2)))
-    if cnt>100: break;
+    if cnt>200: break;
   return []
 
 """ Call decode function """
@@ -50,8 +54,6 @@ decode(np.array([]))
 """ close files and exit """
 f.close()
 w.close()
-
-
 
 
 """

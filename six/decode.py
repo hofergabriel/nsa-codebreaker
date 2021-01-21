@@ -9,10 +9,6 @@ from struct import *
 f=open("../../signal.ham","rb")
 w=open("stream.bin","wb")
 
-#parity=np.concatenate((code,np.identity(3)),axis=1)
-
-#---------------------------------------------------------------------
-
 def str2mat_vert(s):
   ret=np.zeros((5,1))
   for i in range(ret.shape[0]):
@@ -31,7 +27,8 @@ def str2mat_horz(s):
 """
 def decode(p):
   # read two bytes from file 
-  b = f.read(2)
+  b=f.read(2)
+
   # initialize cnt and error to zero
   # cnt is used for debugging to avoid reading whole file
   cnt=int(0)
@@ -43,25 +40,28 @@ def decode(p):
     for j in range(8):
       # convert 2 python bytes objects to binary string
       binary16=bin(int.from_bytes(b, 'little'))[2:].zfill(16)
+      
       # xor sign bit and append to codeword
-      s+=str(int(binary16[15])^1)
+      s+=str(int(binary16[0])^1)
 
       # repeat 
       b=f.read(2)
       cnt+=1
     
     print(s)
-    #w.write(pack('B',int(s,2)))
+    w.write(pack('B',int(s,2)))
     
     #print(hex(int(s,2)))
     #check = np.array(list(map(lambda x:x%2, p.dot(str2mat_vert(s)))))
     #print(np.transpose(check))
 
-    if cnt>2000: break;
+    if cnt>500: break;
   #return [check,error]
 
+""" Call decode function """
 decode(np.array([]))
   
+""" close files and exit """
 f.close()
 w.close()
 

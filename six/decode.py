@@ -1,5 +1,7 @@
-#print(s + '  ' + str(int(s,2)) + '  ' + str(pack('B',int(s,2))))
-#w.write(pack('B',int(s,2)))
+"""
+Author: Gabriel Hofer
+Date: 01/21/2021
+"""
 
 import numpy as np
 import sys
@@ -26,37 +28,21 @@ def str2mat_horz(s):
   by muliplying codewords by different parity matrices
 """
 def decode(p):
-  # read two bytes from file 
-  b=f.read(2)
+  b=f.read(2)                                                 # read two bytes from file 
 
-  # initialize cnt and error to zero
-  # cnt is used for debugging to avoid reading whole file
-  cnt=int(0)
-  error=int(0)
+  cnt=int(0)                                                  # initialize cnt and error to zero
+  error=int(0)                                                # cnt is used for debugging to avoid reading whole file
   while b:
-    # initialize codeword to empty string
-    s=''
-    # read x IEEE 754 binary16 numbers
-    for j in range(8):
-      # convert 2 python bytes objects to binary string
-      binary16=bin(int.from_bytes(b, 'little'))[2:].zfill(16)
-      
-      # xor sign bit and append to codeword
-      s+=str(int(binary16[0])^1)
-
-      # repeat 
-      b=f.read(2)
+    s=''                                                      # initialize codeword to empty string
+    for j in range(8):                                        # read x IEEE 754 binary16 numbers
+      binary16=bin(int.from_bytes(b, 'little'))[2:].zfill(16) # convert 2 python bytes objects to binary string
+      s+=str(int(binary16[0])^1)                              # xor sign bit and append to codeword
+      b=f.read(2) 
       cnt+=1
-    
     print(s)
     w.write(pack('B',int(s,2)))
-    
-    #print(hex(int(s,2)))
-    #check = np.array(list(map(lambda x:x%2, p.dot(str2mat_vert(s)))))
-    #print(np.transpose(check))
-
-    if cnt>500: break;
-  #return [check,error]
+    if cnt>100: break;
+  return []
 
 """ Call decode function """
 decode(np.array([]))
@@ -64,6 +50,18 @@ decode(np.array([]))
 """ close files and exit """
 f.close()
 w.close()
+
+
+
+
+"""
+
+#check = np.array(list(map(lambda x:x%2, p.dot(str2mat_vert(s)))))
+#print(np.transpose(check))
+#print(hex(int(s,2)))
+
+"""
+
 
 
 

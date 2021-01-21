@@ -8,6 +8,7 @@ $ od -t x1 stream.bin | head -n 10
 
 import numpy as np
 import sys
+import os
 import time
 from struct import *
 
@@ -55,13 +56,19 @@ decode(np.array([]))
 f.close()
 w.close()
 
+""" dump hex """
+os.system(" echo ; od -t x1 stream.bin | head -n 10 ")
+
+
+
+
+
+
 
 """
-
 #check = np.array(list(map(lambda x:x%2, p.dot(str2mat_vert(s)))))
 #print(np.transpose(check))
 #print(hex(int(s,2)))
-
 """
 
 

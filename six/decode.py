@@ -46,7 +46,7 @@ def decode(p):
       cnt+=1
     print(s)
     w.write(pack('B',int(s,2)))
-    if cnt>200: break;
+    if cnt>400: break;
   return []
 
 """ Call decode function """
@@ -58,10 +58,6 @@ w.close()
 
 """ dump hex """
 os.system(" echo ; od -t x1 stream.bin | head -n 10 ")
-
-
-
-
 
 
 

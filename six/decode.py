@@ -31,12 +31,10 @@ def str2mat_horz(s):
 
 """
   Read bytes from binary file and decode codewords
-  by muliplying codewords by different parity matrices
 """
 def decode(p):
   b=f.read(2)                                                 # read two bytes from file 
   cnt=int(0)                                                  # initialize cnt and error to zero
-  error=int(0)                                                # cnt is used for debugging to avoid reading whole file
   while b:
     s=''                                                      # initialize codeword to empty string
     for j in range(8):                                        # read x IEEE 754 binary16 numbers
@@ -46,7 +44,7 @@ def decode(p):
       cnt+=1
     print(s)
     w.write(pack('B',int(s,2)))
-    if cnt>400: break;
+    if cnt>256: break;
   return []
 
 """ Call decode function """
@@ -56,8 +54,8 @@ decode(np.array([]))
 f.close()
 w.close()
 
-""" dump hex """
-os.system(" echo ; od -t x1 stream.bin | head -n 10 ")
+""" dump hex in terminal """
+os.system(" echo ; hexdump -C stream.bin | head -n 10 ")
 
 
 

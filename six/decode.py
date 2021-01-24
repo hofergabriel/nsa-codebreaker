@@ -42,7 +42,7 @@ def decode(p):
       cnt+=1
     print(s + '  ' + str(hex(int(s,2))))
     w.write(pack('B',int(s,2)))
-    if cnt>256: break;
+    if cnt>255: break;
   return []
 
 """ Call decode function """

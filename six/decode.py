@@ -40,7 +40,7 @@ def decode(p):
       s+=str(int(binary16[0])^1)                                # xor sign bit and append to codeword
       b=f.read(2) 
       cnt+=1
-    print(s)
+    print(s + '  ' + str(hex(int(s,2))))
     w.write(pack('B',int(s,2)))
     if cnt>256: break;
   return []
@@ -56,12 +56,12 @@ w.close()
 os.system(" echo ; hexdump -C stream.bin | head -n 10 ")
 
 
-
 """
 #check = np.array(list(map(lambda x:x%2, p.dot(str2mat_vert(s)))))
 #print(np.transpose(check))
 #print(hex(int(s,2)))
 """
+
 
 
 

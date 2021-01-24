@@ -29,17 +29,15 @@ def str2mat_horz(s):
     ret[0,i]=int(s[i])
   return ret
 
-"""
-  Read bytes from binary file and decode codewords
-"""
+""" Read bytes from binary file and decode codewords """
 def decode(p):
-  b=f.read(2)                                                 # read two bytes from file 
-  cnt=int(0)                                                  # initialize cnt and error to zero
+  b=f.read(2)                                                   # read two bytes from file 
+  cnt=int(0)                                                    # initialize cnt and error to zero
   while b:
-    s=''                                                      # initialize codeword to empty string
-    for j in range(8):                                        # read x IEEE 754 binary16 numbers
-      binary16=bin(int.from_bytes(b, 'little'))[2:].zfill(16) # convert 2 python bytes objects to binary string
-      s+=str(int(binary16[0])^1)                              # xor sign bit and append to codeword
+    s=''                                                        # initialize codeword to empty string
+    for j in range(8):                                          # read x IEEE 754 binary16 numbers
+      binary16=bin(int.from_bytes(b, 'little'))[2:].zfill(16)   # convert 2 python bytes objects to binary string
+      s+=str(int(binary16[0])^1)                                # xor sign bit and append to codeword
       b=f.read(2) 
       cnt+=1
     print(s)

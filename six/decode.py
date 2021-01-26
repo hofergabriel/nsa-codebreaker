@@ -1,7 +1,6 @@
 """
 Author: Gabriel Hofer
 Date: 01/21/2021
-
 Useful Commands to Remember: 
 $ od -t x1 stream.bin | head -n 10
 """
@@ -13,26 +12,21 @@ import time
 from struct import *
 
 f=open("../../signal.ham","rb")
-w=open("stream.bin","wb")
+#w=open("stream.bin","wb")
 
-""" binary string --> vector of boolean (ints) """
-def str2mat_vert(s):
-  ret=np.zeros((5,1))
-  for i in range(ret.shape[0]):
-    ret[i,0]=int(s[i])
-  return ret
-
-""" binary string --> vector of boolean (ints) """
-def str2mat_horz(s):
-  ret=np.zeros((1,5))
-  for i in range(ret.shape[1]):
-    ret[0,i]=int(s[i])
-  return ret
+""" /// """
+def hamming_distance(string1, string2):
+	dist_counter = 0
+	for n in range(len(string1)):
+		if string1[n] != string2[n]:
+			dist_counter += 1
+	return dist_counter
 
 """ Read bytes from binary file and decode codewords """
 def decode(p):
   b=f.read(2)                                                   # read two bytes from file 
   cnt=int(0)                                                    # initialize cnt and error to zero
+  ret=''
   while b:
     s=''                                                        # initialize codeword to empty string
     for j in range(8):                                          # read x IEEE 754 binary16 numbers
@@ -40,28 +34,43 @@ def decode(p):
       s+=str(int(binary16[0])^1)                                # xor sign bit and append to codeword
       b=f.read(2) 
       cnt+=1
-    print(s + '  ' + str(hex(int(s,2))))
-    w.write(pack('B',int(s,2)))
-    if cnt>255: break;
-  return []
+    ret+=s
+    #w.write(pack('B',int(s,2)))
+    if cnt>(1<<10): break;
+  return ret
 
 """ Call decode function """
-decode(np.array([]))
-  
+stream = decode(np.array([]))
+#print(stream)
+
+""" need to try different codeword lengths """
+for i in range(4):
+  print("block size: "+str(8*(i+1)))
+  mxdist=0
+  avgdist=0
+  cnt=0
+  j=0
+  print("dist: ",end='')
+  while j+16*(i+1)-1<len(stream):
+    dist=hamming_distance(stream[j:j+8*(i+1)],stream[j+8*(i+1):j+16*(i+1)])
+    if dist>mxdist: mxdist=dist
+    j+=8*(i+1)
+    print(str(dist),end=' ')
+    avgdist+=dist
+    cnt+=1
+  print()
+  print("avgdist: "+str(avgdist/cnt))
+  print("mxdist: "+str(mxdist))
+  print()
+
+
+
+
+
 """ close files and exit """
-f.close()
-w.close()
-
+# f.close() ; w.close()
 """ dump hex in terminal """
-os.system(" echo ; hexdump -C stream.bin | head -n 10 ")
-
-
-"""
-#check = np.array(list(map(lambda x:x%2, p.dot(str2mat_vert(s)))))
-#print(np.transpose(check))
-#print(hex(int(s,2)))
-"""
-
+# os.system(" echo ; hexdump -C stream.bin | head -n 10 ")
 
 
 

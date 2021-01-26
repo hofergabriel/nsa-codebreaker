@@ -31,12 +31,12 @@ def decode(p):
     s=''                                                        # initialize codeword to empty string
     for j in range(8):                                          # read x IEEE 754 binary16 numbers
       binary16=bin(int.from_bytes(b, 'little'))[2:].zfill(16)   # convert 2 python bytes objects to binary string
-      s+=str(int(binary16[0])^1)                                # xor sign bit and append to codeword
+      s+=str(int(binary16[15])^1)                                # xor sign bit and append to codeword
       b=f.read(2) 
-      cnt+=1
+    cnt+=1
     ret+=s
     #w.write(pack('B',int(s,2)))
-    if cnt>(1<<11): break;
+    if cnt>(1<<8): break;
   return ret
 
 """ Call decode function """
@@ -47,22 +47,15 @@ print(stream)
 for i in range(8,64,8):
   print("-------------------------------------------------")
   print("blockSize: "+str(i))
-  print()
   for k in range(3,i+1):
     mndist=1e9
-    avgdist=0
-    cnt=0
     j=0
     while j+2*i <len(stream):
       dist=hamming_distance(stream[j:j+k],stream[j+i:j+i+k])
-      if dist<mndist and dist>0: mndist=dist
+      if dist<mndist: mndist=dist
       j+=i
-      avgdist+=dist
-      cnt+=1
-    #print("avgdist: "+str(avgdist/cnt))
-    #print("mndist: "+str(mndist))
     if mndist>1:
-      print("mndist: "+str(mndist))
+      print("codeword size: "+str(k)+" padding: "+str(i-k)+" mindist: "+str(mndist))
 
 
 

@@ -36,32 +36,45 @@ def decode(p):
       cnt+=1
     ret+=s
     #w.write(pack('B',int(s,2)))
-    if cnt>(1<<10): break;
+    if cnt>(1<<11): break;
   return ret
 
 """ Call decode function """
 stream = decode(np.array([]))
-#print(stream)
+print(stream)
 
-""" need to try different codeword lengths """
-for i in range(4):
-  print("block size: "+str(8*(i+1)))
-  mxdist=0
-  avgdist=0
-  cnt=0
-  j=0
-  print("dist: ",end='')
-  while j+16*(i+1)-1<len(stream):
-    dist=hamming_distance(stream[j:j+8*(i+1)],stream[j+8*(i+1):j+16*(i+1)])
-    if dist>mxdist: mxdist=dist
-    j+=8*(i+1)
-    print(str(dist),end=' ')
-    avgdist+=dist
-    cnt+=1
+""" try different codeword lengths && vary codeword size for each block length """
+for i in range(8,64,8):
+  print("-------------------------------------------------")
+  print("blockSize: "+str(i))
   print()
-  print("avgdist: "+str(avgdist/cnt))
-  print("mxdist: "+str(mxdist))
-  print()
+  for k in range(3,i+1):
+    mndist=1e9
+    avgdist=0
+    cnt=0
+    j=0
+    while j+2*i <len(stream):
+      dist=hamming_distance(stream[j:j+k],stream[j+i:j+i+k])
+      if dist<mndist and dist>0: mndist=dist
+      j+=i
+      avgdist+=dist
+      cnt+=1
+    #print("avgdist: "+str(avgdist/cnt))
+    #print("mndist: "+str(mndist))
+    if mndist>1:
+      print("mndist: "+str(mndist))
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

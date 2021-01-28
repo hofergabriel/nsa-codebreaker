@@ -48,7 +48,6 @@ def decode(bl_sz):
 	return allzeros
 
 
-
 f=open("../../signal.ham","rb")
 decode(17)
 
@@ -70,18 +69,11 @@ exit()
 
 
 
-
-
-
-
 """ close files and exit """
 f.close() ; w.close()
 """ dump hex in terminal """
 # os.system(" echo ; hexdump -C stream.bin | head -n 10 ")
 #w.write(pack('B',int(s,2)))
-
-
-
 
 
 

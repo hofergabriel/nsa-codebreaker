@@ -5,6 +5,11 @@ Useful Commands to Remember:
 $ od -t x1 stream.bin | head -n 10
 
 number of bytes in signal.ham --> 9633360
+
+Notes: 
+
+	It appears that the last parity bit adds all of the data and parity bits together modulo 2
+
 """
 
 import numpy as np
@@ -25,11 +30,10 @@ def hamming_distance(string1, string2):
 	return dist_counter
 
 """ Read bytes from binary file and decode codewords """
-def decode(bl_sz):
+def decode(bl_sz,f,brk):
 	b=f.read(2)                                                   # read two bytes from file 
 	cnt=int(0)                                                    # initialize cnt and error to zero
 	ret=''
-	allzeros=True
 	while b:
 		s=''                                                        # initialize codeword to empty string
 		for j in range(bl_sz):                                          # read x IEEE 754 binary16 numbers
@@ -38,42 +42,71 @@ def decode(bl_sz):
 			s+=str(int(binary16[0])^1)                                # xor sign bit and append to codeword
 			b=f.read(2) 
 		cnt+=1
-		ret+=s
-		print(s)
-		#print(s[len(s)-10:len(s)-1])
-		if s[len(s)-1]=='0':
-			allzeros=False
-		if cnt>(1<<7): break;
-		#if cnt>(1<<18): break;
-	return allzeros
+		if cnt>brk:
+			break;
+		ret+=s[0:11]
+	return ret
 
 
-f=open("../../signal.ham","rb")
-decode(17)
+""" / """
+def main0():
+	f=open("../../signal.ham","rb")
+	w=open("stream.bin","wb")
+	
+	stream = decode(17,f,1<<30)
+	for i in range(len(stream)//8):
+		w.write(pack('B',int(stream[8*i:8*i+8],2)))
+	
+	f.close() ; w.close()
+	exit()
+
+
+#print(str(np.multiply(np.identity(8),np.ones((8,8)))))
+I8 = np.identity(4)
+J8 = np.array([
+	[ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+	[ 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+	[ 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 ],
+	[ 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1 ]])
+
+H = np.concatenate((J8,I8),axis=1)
+print(H)
+vt0 = np.fromstring('0 1 0 1 0 0 1 0 0 1 0 1 0 1 0', dtype=int, sep=' ').reshape(15,1)
+print(np.array(list((map(lambda x: x%2, H.dot(vt0).reshape(1,4))))))
+
+
+print("\n")
+vt1 = np.fromstring('0 1 0 0 1 0 1 0 0 0 1 1 1 0 1', dtype=int, sep=' ').reshape(15,1)
+print(np.array(list((map(lambda x: x%2, H.dot(vt1).reshape(1,4))))))
+
+
+
+
 
 
 exit()
-for i in range(4,int(math.sqrt(FILESIZE))+1):
-	if FILESIZE%i==0:
-		print("i: "+str(i))
-		z1=decode(i)
-		print("allzeros: "+str(z1))
-		print("i: "+str(FILESIZE // i))
-		z2=decode( FILESIZE // i)
-		print("allzeros: "+str(z2))
-		if z1 or z2:
-			print("ok ok")
-			exit()
-	f.close() 
-exit()
+
+
+""" / """
+def main1():
+	f=open("../../signal.ham","rb")
+	stream = decode(17,f,100)
+	for i in range(len(stream)//8):
+		print(stream[17*i:17*i+11])
+		vt = np.fromstring(stream[17*i:17*i+11], dtype=int, sep='')
+		
+		print(stream[17*i+11:17*i+16])
+
+	f.close()
+	exit()
 
 
 
-""" close files and exit """
-f.close() ; w.close()
+main1()
+
+
 """ dump hex in terminal """
 # os.system(" echo ; hexdump -C stream.bin | head -n 10 ")
-#w.write(pack('B',int(s,2)))
 
 
 

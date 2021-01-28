@@ -3,6 +3,7 @@ Author: Gabriel Hofer
 Date: 01/21/2021
 Useful Commands to Remember: 
 $ od -t x1 stream.bin | head -n 10
+# os.system(" echo ; hexdump -C stream.bin | head -n 10 ")
 
 number of bytes in signal.ham --> 9633360
 
@@ -61,52 +62,77 @@ def main0():
 	exit()
 
 
-#print(str(np.multiply(np.identity(8),np.ones((8,8)))))
-I8 = np.identity(4)
-J8 = np.array([
-	[ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
-	[ 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
-	[ 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 ],
-	[ 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1 ]])
-
-H = np.concatenate((J8,I8),axis=1)
-print(H)
-vt0 = np.fromstring('0 1 0 1 0 0 1 0 0 1 0 1 0 1 0', dtype=int, sep=' ').reshape(15,1)
-print(np.array(list((map(lambda x: x%2, H.dot(vt0).reshape(1,4))))))
-
-
-print("\n")
-vt1 = np.fromstring('0 1 0 0 1 0 1 0 0 0 1 1 1 0 1', dtype=int, sep=' ').reshape(15,1)
-print(np.array(list((map(lambda x: x%2, H.dot(vt1).reshape(1,4))))))
-
-
-# look at the codewords with ony one 1-bit!!! -- and see which parity bits are non-zero
-
-
-
-exit()
-
-
-""" / """
 def main1():
 	f=open("../../signal.ham","rb")
-	stream = decode(17,f,100)
-	for i in range(len(stream)//8):
-		print(stream[17*i:17*i+11])
-		vt = np.fromstring(stream[17*i:17*i+11], dtype=int, sep='')
+	#w=open("stream.bin","wb")
+	stream = decode(17,f,1<<40)
+	d={}
+	for i in range(len(stream)//8): 
+		d[ stream[17*i:17*i+17] ] = 1 if stream[17*i:17*i+17] not in d else 1 + d[ stream[17*i:17*i+17] ]
+	desc=sorted(d.items(), key=lambda kv: kv[1], reverse=True)
 		
-		print(stream[17*i+11:17*i+16])
+	d2={}	
+	j=0
+	for i in desc:
+		d2[i[0]]=i[1]
+		j+=1
+		if j>=(1<<11)+1:
+			break;
+	#----
+	d3={}
+	for j in range(11):
+		for i in d:
+			lookup = '0'*j + '1' + '0'*(10-j)
+			if i[0:11] == lookup and i[0:11] not in d3:
+				d3[i[0:11]] = [ i, d[i] ]
+				print(i + ' ' + str(d[i]))
 
-	f.close()
+
 	exit()
 
 
+	#w.write(pack('B',int(stream[8*i:8*i+8],2)))
+	#f.close() ; w.close()
+
 
 main1()
+exit()
 
 
-""" dump hex in terminal """
-# os.system(" echo ; hexdump -C stream.bin | head -n 10 ")
+
+
+## #print(str(np.multiply(np.identity(8),np.ones((8,8)))))
+## I8 = np.identity(4)
+## J8 = np.array([
+## 	[ 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+## 	[ 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
+## 	[ 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1 ],
+## 	[ 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1 ]])
+## H = np.concatenate((J8,I8),axis=1)
+## print(H)
+## vt0 = np.fromstring('0 1 0 1 0 0 1 0 0 1 0 1 0 1 0', dtype=int, sep=' ').reshape(15,1)
+## print(np.array(list((map(lambda x: x%2, H.dot(vt0).reshape(1,4))))))
+## print("\n")
+## vt1 = np.fromstring('0 1 0 0 1 0 1 0 0 0 1 1 1 0 1', dtype=int, sep=' ').reshape(15,1)
+## print(np.array(list((map(lambda x: x%2, H.dot(vt1).reshape(1,4))))))
+## # look at the codewords with ony one 1-bit!!! -- and see which parity bits are non-zero
+
+
+
+## """ / """
+## def main2():
+## 	f=open("../../signal.ham","rb")
+## 	stream = decode(17,f,100)
+## 	for i in range(len(stream)//8):
+## 		print(stream[17*i:17*i+11])
+## 		vt = np.fromstring(stream[17*i:17*i+11], dtype=int, sep='')
+## 		
+## 		print(stream[17*i+11:17*i+16])
+## 
+## 	f.close()
+## 	exit()
+
+
 
 
 

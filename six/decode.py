@@ -80,7 +80,7 @@ vt1 = np.fromstring('0 1 0 0 1 0 1 0 0 0 1 1 1 0 1', dtype=int, sep=' ').reshape
 print(np.array(list((map(lambda x: x%2, H.dot(vt1).reshape(1,4))))))
 
 
-
+# look at the codewords with ony one 1-bit!!! -- and see which parity bits are non-zero
 
 
 

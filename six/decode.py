@@ -70,14 +70,6 @@ def main1():
 	for i in range(len(stream)//8): 
 		d[ stream[17*i:17*i+17] ] = 1 if stream[17*i:17*i+17] not in d else 1 + d[ stream[17*i:17*i+17] ]
 	desc=sorted(d.items(), key=lambda kv: kv[1], reverse=True)
-		
-	d2={}	
-	j=0
-	for i in desc:
-		d2[i[0]]=i[1]
-		j+=1
-		if j>=(1<<11)+1:
-			break;
 	#----
 	d3={}
 	for j in range(11):
@@ -86,7 +78,6 @@ def main1():
 			if i[0:11] == lookup and i[0:11] not in d3:
 				d3[i[0:11]] = [ i, d[i] ]
 				print(i + ' ' + str(d[i]))
-
 
 	exit()
 

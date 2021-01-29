@@ -21,7 +21,6 @@ from struct import *
 import math
 FILESIZE=9633356
 
-
 """ / """
 def hamming_distance(string1, string2):
 	dist_counter = 0
@@ -53,13 +52,20 @@ def decode(bl_sz,f,brk):
 def main0():
 	f=open("../../signal.ham","rb")
 	w=open("stream.bin","wb")
-	
-	stream = decode(17,f,1<<30)
+	stream = decode(17,f,1<<40)
 	for i in range(len(stream)//8):
 		w.write(pack('B',int(stream[8*i:8*i+8],2)))
-	
 	f.close() ; w.close()
-	exit()
+
+def main2():
+	f=open("../../signal.ham","rb")
+	stream = decode(17,f,1<<7)
+	for i in range(len(stream)//17):
+		print(stream[17*i:17*i+17])
+	f.close() ; 
+
+main2()
+exit()
 
 
 def main1():
@@ -71,16 +77,26 @@ def main1():
 		d[ stream[17*i:17*i+17] ] = 1 if stream[17*i:17*i+17] not in d else 1 + d[ stream[17*i:17*i+17] ]
 	desc=sorted(d.items(), key=lambda kv: kv[1], reverse=True)
 	#----
-	d3={}
 	for j in range(11):
+		print()
 		for i in d:
 			lookup = '0'*j + '1' + '0'*(10-j)
-			if i[0:11] == lookup and i[0:11] not in d3:
-				d3[i[0:11]] = [ i, d[i] ]
+			if i[0:11] == lookup:
 				print(i + ' ' + str(d[i]))
+	
 
-	exit()
 
+	
+
+
+#	d3={}
+#	for j in range(11):
+#		for i in d:
+#			lookup = '0'*j + '1' + '0'*(10-j)
+#			if i[0:11] == lookup and i[0:11] not in d3:
+#				d3[i[0:11]] = [ i, d[i] ]
+#				print(i + ' ' + str(d[i]))
+#
 
 	#w.write(pack('B',int(stream[8*i:8*i+8],2)))
 	#f.close() ; w.close()

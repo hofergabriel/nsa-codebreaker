@@ -1,10 +1,11 @@
 """
 Author: Gabriel Hofer
 Date: 01/21/2021
-Useful Commands to Remember: 
-$ od -t x1 stream.bin | head -n 10
-$ os.system(" echo ; hexdump -C stream.bin | head -n 10 ")
-number of bytes in signal.ham --> 9633360
+
+Useful: 
+  $ od -t x1 stream.bin | head -n 10
+  os.system(" echo ; hexdump -C stream.bin | head -n 10 ")
+  number of bytes in signal.ham --> 9633360
 """
 
 import numpy as np
